@@ -28,20 +28,13 @@ In the first two days we will go through fundamental concepts in R and you will 
 
 In summary the topics we will cover the first two days are as follows:
 
-Part1 
-a. Quick recap on basic programming concepts
-b. Data types
-c. Data import/export
+Part1 - (a) Quick recap on basic programming concepts; (b) Data types ; (c) Data import/export
 
-Part2
-a. Basic exploratory data analysis 
-b. A bit more general programming concepts (time permitting)
+Part2 - (a) Basic exploratory data analysis; (b) A bit more general programming concepts (time permitting)
 
-Part3
-a. Visualisations using ggplot package
+Part3 - (a) Visualisations using ggplot package
 
-Part4
-a. Data wrangling using tidyverse package
+Part4 - (a) Data wrangling using tidyverse package
 
 ### Day 3
 
