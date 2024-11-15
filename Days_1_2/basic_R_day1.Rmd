@@ -1,0 +1,723 @@
+---
+title: "NEUROSYSM930"
+subtitle: "Practical programming session in R - Day 1 parts 1 and 2"
+author: "Dimitrios Kleftogiannis"
+date: "4 December 2024"
+output: html_document
+---
+
+# General info about the course
+
+- Who we are ?
+
+    **Dimi (teacher Day 1 and 2)** https://www4.uib.no/en/find-employees/Dimitrios.Kleftogiannis 
+
+    **Gon (teacher Day 3)** https://www4.uib.no/en/find-employees/Gonzalo.Sanchez.Nido
+
+    **Eirik (teaching assistant and admin)** https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim
+
+- GitHub page with workshop material
+
+
+
+- our UiB Mitt page https://mitt.uib.no/courses/47992 
+
+---
+
+# Recap from the lecture slides
+First we will focus on basic programming concepts that were already mentioned in the document **RTutorial_beforecourse.pdf** that was pre-requested for you to read. 
+
+Load an installed package
+
+```{r load_ggplot, eval=FALSE, tidy=FALSE}
+# 1.1 
+library(ggplot2)
+```
+
+The `ggplot2` package is a very popular package for data visualisation. We will use it later on in more detail.
+
+For now we are going to inspect some data that are coming together with this package.In this way you will become familiar with the Rstudio interface in case you have not seen it before...
+
+Remember that we can always ask R for help.
+
+```{r try_diamonds, eval=FALSE, tidy=FALSE}
+help(diamonds)
+View(diamonds)
+```
+
+### Quick warm up with arithmetics
+
+Lets' do little arithmetics with R:
+
+- write R code in the console
+
+- every line of code is interpreted and executed by R 
+
+- you get a message whether or not your code was correct
+
+- the output of your R code is then shown in the console
+
+- use # sign to add comments next to the commands
+
+```{r quick_warmup, comment = '', eval=TRUE, tidy=FALSE}
+# 1.2
+10^2 + 36     # ^ is executed before +
+3 + 5 * 2 # * is executed first
+(3 + 5) * 2 # the parenthesis make things easier to read
+3 + 5 * 2 ^ 2  # because this is hard to read
+(3 + (5 * (2 ^ 2)))    # clear, if you remember the rules
+2/10000     #really small or large numbers get a scientific notation: `2 * 10^(-4)`.
+5e3  # note the lack of minus here 
+```
+
+You have already appreciated that the order of operators matter, and that it is a good programming practise to use parentheses and make easy to read commands.
+
+
+### Mathematical functions
+
+R has many built in mathematical functions. To call a function,we simply type its name, followed by open and closing parentheses.Anything we type inside the parentheses is called the function's arguments.
+
+```{r mathematical_functions, comment = '', eval=TRUE, tidy=FALSE}
+#1.3
+sum(10, 20, 30, 40, 50)
+sin(1)  # trigonometry functions
+log(1)  # natural logarithm loge()
+log10(10) # base-10 logarithm
+
+```
+
+Don't worry about trying to remember every function in R. You can simply Google them.
+As already mentioned we can always ask R for help. Typing a `?` before the name of a command will open the same help page for that command. 
+
+### Comparing things
+
+We can also do comparisons in R. It is relatively easy to remember the operators, but the **==** and **=** need a bit of attention. 
+
+```{r comparison_operators, comment = '', eval=TRUE, tidy=FALSE}
+# 1.4 comparing things
+1 == 1    #equality (note two equals signs, read as "is equal to")
+1 != 4    #inequality (read as "is not equal to")
+1 < 2     #less than
+1 <= 1    #less than or equal to
+1 > 0     #greater than
+1 >= -9   #greater than or equal to
+```
+
+### Variables
+
+A fundamental concept in programming is a **variable**. 
+
+In more general terms, a variable is a piece of memory that stores a value that can be changed. 
+A variable can refer to anything from numbers and strings to objects, collections, and pointers. Variables are essential in software programs, and without them most modern computing functions would be impossible.
+
+In our course and in the next sections
+
+- a variable allows you to store a value (e.g. 4) or an object (e.g. a function description) in R
+
+- use this variable’s name to easily access the value or the object that is stored within this variable.
+
+```{r variables, comment = '', eval=TRUE, tidy=FALSE}
+#1.5
+x <- 100
+x <- x + 1 
+y <- x * 2
+x <- sum
+x(10,100)
+```
+
+## R exercise on variables (e1.5)
+
+Which of the following are valid R variable names?
+
+- min_height
+- max.height
+- _age
+- .mass
+- MaxLength
+- min-length
+- 2widths
+- celsius2kelvin
+
+
+# Data types
+
+R offers numerous **data types**: e.g.
+
+- decimal values like 4.5 are called **numerics**
+
+- natural numbers like 4 are called **integers**
+
+- Boolean values (`TRUE` or `FALSE`) are called **logical**
+
+- `Date` for date and time 
+
+- text (or string) values are called **characters**.
+
+
+```{r data_types, comment = '', eval=TRUE, tidy=FALSE}
+#1.6
+my_numeric <- 42.5
+my_character <- "some text"
+my_logical <- TRUE
+my_date <- as.Date("05/29/2018", "%m/%d/%Y")
+my_numeric_str <- '42.5'
+
+#un-comment the follow and try to run
+#my_numeric_str + 1
+
+my_numeric + 1
+```
+
+We can verify the data type of a variable with the `class()` function:
+
+```{r comment = ''}
+class(my_numeric)
+class(my_date)
+class(my_numeric_str)
+```
+
+### List objects in the environment and delete objects
+```{r list_and_delete, comment = '', eval=TRUE, tidy=FALSE}
+ls()
+ls(pat='max.')
+ls(pat='my_')
+ls(all.names = TRUE)
+
+#remove objects from the environment
+rm(my_numeric)                            # remove a single object
+rm(my_character, my_logical)              # remove multiple objects
+rm(list = c('my_date', 'my_numeric_str'))     # remove a list of objects
+rm(list = ls()) 
+
+```
+
+### Vectors
+
+A **vector** is a simple structure to store data:
+
+- one-dimension arrays that can hold numeric data, character data, or logical data
+
+- you create a vector with the combine function `c()`
+
+- operations can be applied to each element of the vector automatically
+
+Here are some examples:
+
+```{r vectors, comment = '', eval=TRUE, tidy=FALSE}
+# 1.6.1 Vectors
+my_vector <- c(1, 2, 3, 4)
+my_vector > 4
+x <- 1:5
+my_vector_2 <- c(0, x, 20, 0)                      
+my_vector_2[2]       # inspect entry 2 from vector my_vector_2
+my_vector_2[2:3]     # inspect entries 2 and 3
+my_vector_2[c(1:3)]
+length(my_vector_2)  # get vector length
+
+my_games <- c("basketball", "ski", "billiard")
+my_games
+
+```
+
+We need to know about something called *type coercion*, in R. It is often the source of many surprises
+and the reason why we need to be aware of the basic data types and how R will interpret them. When R encounters a mix of types (here numeric and character) to be combined into a single vector, it will force them all to be the same type. 
+
+Lets see some examples:
+```{r coersion, comment = '', eval=TRUE, tidy=FALSE}
+coercion_vector <- c('a', TRUE)
+coercion_vector
+another_coercion_vector <- c(0, TRUE)
+another_coercion_vector
+
+character_vector_example <- c('1','2','4')
+character_vector_example
+#character_vector_example + 1
+character_coerced_to_numeric <- as.numeric(character_vector_example)
+character_coerced_to_numeric
+character_coerced_to_numeric <- character_coerced_to_numeric - 1
+character_coerced_to_numeric
+numeric_coerced_to_logical <- as.logical(character_coerced_to_numeric)
+numeric_coerced_to_logical
+
+```
+
+The coercion rules go: 
+`logical` -> `integer` -> `double`/`numeric` -> `complex` -> `character`, 
+
+where -> can be read as *are transformed into
+
+**In conclusion**
+
+Some surprising things can happen when R forces one basic data type into another....
+
+Be careful and always inspect your data from one part of the analysis to another
+
+### Matrices
+
+A **matrix** is:
+
+- a collection of elements of the same data type (numeric, character, or logical) 
+
+- fixed number of rows and columns.
+
+Here are some examples:
+
+```{r matrices, comment = '', eval=TRUE, tidy=FALSE}
+# 1.6.2 matrices
+
+my_matrix <- matrix(1:12, nrow=3,ncol=4, byrow = TRUE)
+my_matrix
+my_matrix[2, 4]
+
+class(my_matrix)
+typeof(my_matrix)
+my_matrix[2, 4] <- 4.33
+typeof(my_matrix)
+str(my_matrix)
+
+dim(my_matrix)
+ncol(my_matrix)
+nrow(my_matrix)
+
+
+```
+
+**Note on Missing Values**
+
+In real data analysis, it is often the case that we are missing some data in a
+data set. For example, say we want to add tail length to our dataset, but one of
+our cats wouldn't hold still long enough to be measured... we know it has a
+tail (so we can't record it as `0`), but we don't know what it is. We also
+can't record it using a word or code (character; such as `"missing"`) because
+vectors in R all have to be the same type, and weight is numeric. A common
+practice is to use a placeholder value such as `9999`, but that can cause
+problems if we neglect to deal with it properly, so it's not recommended. 
+
+R has a special placeholder for missing values called `NA` - it looks a lot like a
+character value, but it is not - it is a special value that has the same type as
+the vector in which it is found.
+
+```{r comment = ''}
+my_matrix[2,3] <- NA
+my_matrix
+
+```
+
+
+### Data frames and tibbles
+
+A **data frame**:
+
+- is pretty much the *de facto* data structure for most tabular data 
+
+- variables of a data set as columns and the observations as rows.
+
+--
+
+A **tibble**:
+
+- a.k.a `tbl` 
+
+- a type of data frame common in the `tidyverse`
+
+- slightly different default behaviour than data frames. Check the following website for more info https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html
+
+Let's see some examples here:
+
+---
+
+```{r data_frames, comment = '', eval=TRUE, tidy=FALSE}
+# 1.6.3
+library(ggplot2) #i had to load it again otherwise diamonds dataset was missing...
+
+#help(mtcars)
+mtcars
+head(mtcars)
+str(mtcars)
+dim(mtcars)
+colnames(mtcars)
+rownames(mtcars)
+#View(mtcars)
+
+#the operator $
+mtcars$cyl
+mtcars[,2]
+mtcars[,'cyl']
+
+typeof(mtcars$cyl)
+summary(mtcars$cyl)   # use $ to extract another variable from a data frame
+mtcars$mpg
+summary(mtcars$mpg)
+
+#Inspect a built-in tibble
+#help(diamonds)
+str(diamonds)  # built-in in library ggplot2
+head(diamonds)
+dim(diamonds)
+colnames(diamonds)
+#rownames(diamonds)
+#View(diamonds)
+
+```
+
+### Lists
+
+A **list** allows you to 
+
+- gather a variety of objects under one name in an ordered way
+
+- these objects can be matrices, vectors, data frames, even other lists
+
+- a list is some kind super data type
+
+- you can store practically any piece of information in it!
+
+- but nested lists can be easily out of control...
+
+---
+
+```{r lists, comment = '', eval=TRUE, tidy=FALSE}
+# 1.6.4
+
+my_list <- list(A = 1, 
+                B = c(1:20), 
+                C = seq(1, 4, length=5),
+                D = c("Dimi", "Gon",'Eirik','Nina'))
+
+names(my_list)
+str(my_list)
+
+#explore different ways to access the lists
+my_list$A
+my_list$D
+
+my_list[[2]]
+
+my_list[3]
+my_list[[3]]
+
+#what about this ?
+my_list$E <- mtcars
+str(my_list)
+
+```
+
+### Factors
+
+Another important data structure is called a *factor*. Factors usually look like
+character data, but are typically used to represent categorical information that
+have a defined set of values.In modeling functions, it's important to know what the baseline levels are. This
+is assumed to be the first factor, but by default factors are labeled in alphabetical order.
+
+```{r factors, comment = '', eval=TRUE, tidy=FALSE}
+# 1.6.5
+mydata <- c("patient","patient","patient" ,"control", "control", "patient")
+mydata
+factor_ordering_example <- factor(mydata, levels = c("patient", "control"))
+factor_ordering_example
+str(factor_ordering_example)
+
+```
+
+For now we will not provide more information, but in the following parts and exercises we will showcase more examples. 
+
+## R exercise on data types (e1.6)
+
+1. Create a vector `fav_music` with the names of your favourite artists/bands.
+
+2. Create a vector `num_records` with the number of records you have in your collection of each of those artists.
+
+3. Create a vector `num_concerts` with the number of times you attended a concert of these artists.
+
+4. Put everything together in a data frame, assign the name `my_music` to this data frame and change the labels of the information stored in the columns to `artist`, `records` and `concerts`.
+
+5. Extract the variable `num_records` from the data frame `my_music`. 
+
+6. Calculate the total number of records in your collection (for the defined set of artists).
+
+7. Check the structure of the data frame, ask for a `summary`.
+
+
+# Data importation and exportation
+
+Very often in real life analyses we have to read data from an external file for example a txt file from the lab or an excel file with clinical information of patients. 
+
+Thus it is very important to be able to read the data in R. It is equally important to be able to write our results in files that are stored in the hard drive. We might have to send some results to colleagues that cannot use R, or even for our publications might be required to provide supplementary files in tabular format.
+
+But to begin with, it is very important to orient our self, and point our working space in Rstudio to the correct location in the hard drive. You need to remember of course the structure of your file system...
+
+
+```{r path_names, comment = '', eval=TRUE, tidy=FALSE}
+
+getwd()
+setwd('/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/')
+
+#use a full path
+path <- file.path("/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/")
+#use a relative path
+path <- file.path('./Days_1_2/')
+
+```
+
+
+### Import a txt file
+
+```{r txt_file, comment = '', eval=TRUE, tidy=FALSE}
+# 1.7 
+path <- file.path("/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/data")
+path.hotdogs <- file.path(path, "hotdogs.txt")
+path.hotdogs
+
+hotdogs <- read.table(path.hotdogs, header = FALSE, 
+                      col.names = c("type", "calories", "sodium"))
+
+str(hotdogs)    # inspect data imported
+dim(hotdogs)
+#View(hotdogs)
+head(hotdogs)
+#find the unique values in the type column
+unique(hotdogs$type)
+```
+
+
+### Import a csv file
+
+```{r csv_file, comment = '', eval=TRUE, tidy=FALSE}
+# 1.8 
+path.pools <- file.path(path, "swimming_pools.csv")
+path.pools
+pools <- read.csv(path.pools)
+str(pools)    # inspect data imported
+dim(pools)
+#View(pools)
+head(pools)
+unique(pools$Address)
+
+#lets try now this version of the data importation function
+pools <- read.csv(path.pools, stringsAsFactors = TRUE)
+str(pools)
+
+```
+
+### Import an excel file
+
+```{r excel_file, comment = '', eval=TRUE, tidy=FALSE}
+# 1.9 
+library(readxl) 
+path.urbanpop <- file.path(path, "urbanpop.xlsx") 
+path.urbanpop
+excel_sheets(path.urbanpop) # list sheet names with `excel_sheets()`
+
+#if the sheet argument is not specified, by default the first sheet will be loaded
+
+pop_1 <- read_excel(path.urbanpop, sheet = 1) 
+pop_2 <- read_excel(path.urbanpop, sheet = 2) 
+pop_3 <- read_excel(path.urbanpop, sheet = 3) 
+
+str(pop_1) 
+str(pop_2)
+str(pop_3) 
+
+pop_list <- list(pop_1, pop_2) 
+names(pop_list)
+names(pop_list) <- c('1960-1966',"1967-1974")
+names(pop_list)
+
+```
+
+**Note on data importation**
+
+There are many more packages that allow us to import different data types for example we can import SPSS or Strata files, or even platform-specific data types.For example there are packages to load images, cytometry files called .fcs files, gene expression data or variant calling data.
+
+
+### Export an excel file
+
+```{r export_excel, comment = '', eval=TRUE, tidy=FALSE}
+#1.10
+library(xlsx)
+#change the path to yours
+write.xlsx(pop_1, '/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/data/my_first_export.xlsx', sheetName = "page1", 
+           col.names = TRUE, row.names = TRUE, append = FALSE)
+
+```
+
+# Our first exploratory data analysis
+
+Now based on what we learned so far we will perform together a data exploration task. We will see different data types and basic functions and we will elaborate a bit more on how we can program other similar analyses in the future. 
+
+```{r basic_exploration, comment = '', eval=TRUE, tidy=FALSE}
+# 1.11 
+path.data <- file.path(path, "CPS1985.txt")
+CPS1985 <- read.table(path.data, header = TRUE)
+
+head(CPS1985)
+colnames(CPS1985)
+dim(CPS1985)
+
+#first explore a numerical variable
+str(CPS1985)
+is.numeric(CPS1985$wage)      # check if variable is numeric
+summary(CPS1985$wage)         # get a summary
+quantile(CPS1985$wage)        #similarly get the distribution quantiles
+mean(CPS1985$wage)            # get mean
+mean(CPS1985$wage,na.rm = T)            # get mean and skip NA
+median(CPS1985$wage)
+var(CPS1985$wage)             # get variance
+sd(CPS1985$wage) #standard deviation
+se <- sd(CPS1985$wage)/length(CPS1985$wage) #standard error
+#visualize the `wage` distribution with simple R functions
+hist(log(CPS1985$wage), freq = FALSE, nclass = 20, col = "light blue")
+lines(density(log(CPS1985$wage)), col = "red")
+
+#now explore a character variable - example of factor
+summary(CPS1985$occupation)
+table(CPS1985$occupation)
+CPS1985$occupation <- factor(CPS1985$occupation,
+                             levels = c("management","office","sales","services","technical","worker" ))
+
+levels(CPS1985$occupation)
+levels(CPS1985$occupation)[c(1,5)] <- c("mgmt","techn")
+summary(CPS1985$occupation)
+table(CPS1985$occupation)
+
+#visualise the distribution
+tab <- table(CPS1985$occupation)
+#tab <- tab/nrow(CPS1985)
+prop.table(tab)    #Express Table Entries as Fraction of Marginal Table
+barplot(tab)
+barplot(prop.table(tab))
+pie(tab)
+pie(tab, col = gray(seq(0.4, 1.0, length = 6)))
+
+#now we explore the factor variables `gender` and `occupation`.
+table(CPS1985$gender)
+CPS1985$gender <- factor(CPS1985$gender,
+                             levels = c("female",'male'))
+
+attach(CPS1985)                 # attach the data set to avoid use of $ 
+table(gender, occupation)       # no name_df$name_var necessary
+prop.table(table(gender, occupation))
+prop.table(table(gender, occupation), 2) #what is the difference ?
+plot(gender ~ occupation, data = CPS1985)
+detach(CPS1985)                 # now detach when work is done
+
+
+#lets explore a factor and a numeric variable
+attach(CPS1985)
+#help(tapply)
+tapply(wage, gender, mean)
+
+tapply(wage, gender, median)
+boxplot(log(wage) ~ gender, data = CPS1985)
+
+
+tapply((wage), list(gender, occupation), mean)
+tapply((wage), list(gender, occupation), median)
+
+```
+
+# A bit more general programming concepts
+
+Here we will learn about relational operators.
+
+As already mentioned remember not not to mix up `==` and `=`, where the latter is used for assignment and the former checks equality.
+
+```{r eval=FALSE}
+3 == (2 + 1)
+"intermediate" != "r"
+(1 + 2) > 4
+dimi <- c(1, 22, 4, 5, 7)
+dimi > 5
+```
+
+Logical operators can be combined,for example
+
+```{r eval=FALSE}
+TRUE & TRUE #logical AND
+FALSE | TRUE #logicak OR
+5 <= 5 & 2 < 3
+3 < 4 | 7 < 6
+```
+
+### Conditionals statements or expressions
+
+In programming, conditionals (equally called conditional statements, conditional expressions and conditional constructs) are programming language constructs that perform different computations or actions or return different values depending on the value of a Boolean expression, called a condition.
+
+Let us focus on the well-known `if` statement in R.
+
+```{r comment = ''}
+num_attendees <- 30
+if (num_attendees > 5) {
+  print("You're popular!")
+}
+```
+
+and if the condition is not full-filled we have the `if else` statement
+
+```{r comment = ''}
+num_attendees <- 5
+if (num_attendees > 5) {
+  print("You're popular!")
+}else{
+  print("You are not so popular!")
+}
+```
+
+
+### Loops 
+
+Loops or Iteration Statements in Programming are helpful when we need a specific task in repetition. They're essential as they reduce hours of work to seconds. The most famous loops are the `while` and the `for` loops that have different properties and uses.
+
+Because of limited time we will showcase only the `for` loop in R.
+
+```{r comment = '', eval=FALSE}
+ourNames <- c('Dimi', 'Gon', 'Eirik','Anna','Nina','Kjell-Morten','Charis')
+
+# loop version 1
+for (p in ourNames) {
+  print(p)
+}
+# loop version 2
+for (i in 1:length(ourNames)) {
+  print(ourNames[i])
+}
+
+#how to iterate over a matrix ?
+my_matrix <- matrix(1:12, nrow=3,ncol=4, byrow = TRUE)
+for (i in 1:nrow(my_matrix)) {
+  for(j in 1:ncol(my_matrix)){
+    print(my_matrix[i,j])
+  }
+}
+
+```
+
+---
+
+### Write your own function
+
+Creating a function in R is basically the assignment of a function object to a variable. 
+
+```{r comment = ''}
+my_weird_sqrt <- function(x) {
+  sqrt(x)+1
+}
+
+# use the function
+my_weird_sqrt(16)
+```
+
+Irrespective of  how long and complicated our R analyses are,it is highly advisable to create functions for tasks that can be nicely generalised. This helps us to write "cleaner" programs, that are easier to read and understand. 
+Of course this requires some expertise on programming, but it is something you can  learn and practice from now. 
+
+Ideally, in real life applications we can write whole blocks of codes as functions that can be stored in separate R files. This way our codes become modular and we can re-use scripts for more general functions.  
+
+For now just remember that if you have an external file defining a function or even a script with more than one functions,we can incorporate all the functions they define into another script with the command:
+
+**source(path/tofile/myFunction.R)**
+
+
+---
+
+
+

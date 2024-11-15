@@ -1,0 +1,566 @@
+---
+title: "NEUROSYSM930"
+subtitle: "Practical programming session in R - Day 2 parts 3 and 4"
+author: "Dimitrios Kleftogiannis"
+date: "5 December 2024"
+output: html_document
+---
+
+# General info about the course
+
+- Who we are ?
+
+    **Dimi (teacher Day 1 and 2)** https://www4.uib.no/en/find-employees/Dimitrios.Kleftogiannis 
+
+    **Gon (teacher Day 3)** https://www4.uib.no/en/find-employees/Gonzalo.Sanchez.Nido
+
+    **Eirik (teaching assistant and admin)** https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim
+
+- GitHub page with workshop material
+
+
+
+- our UiB Mitt page https://mitt.uib.no/courses/47992 
+
+---
+
+# Visualisations
+
+
+### Basic plots
+
+Our starting point is the construction of a **scatterplot**:
+
+- load the `journals.txt` data set and save as `Journals` data frame
+
+- work through the following instructions
+
+```{r basic_visualisations, comment = '', eval=TRUE, tidy=FALSE}
+# 2.1
+
+#define your working directory and path
+getwd()
+path <- file.path("/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/data")
+
+path.journals <- file.path(path, "journals.txt")
+path.journals   # inspect path name
+Journals <- read.table(path.journals, header = TRUE)
+
+#data inspection
+head(Journals)
+colnames(Journals)
+rownames(Journals)
+dim(Journals)
+
+#the simplest possible scatter plot you can make
+plot(log(Journals$subs), log(Journals$citations), data = Journals)
+rug(log(Journals$subs))
+rug(log(Journals$citations), side = 2)
+
+#make some adjustments to improve
+plot(log(price) ~ log(subs), data = Journals, pch = 19, 
+     col = "blue", xlim = c(0, 8), ylim = c(-7, 7), 
+     main = "Library subscriptions")
+rug(log(Journals$subs))
+rug(log(Journals$price), side=2)
+
+#The `curve()` function draws a curve corresponding to a function over the interval [from, to].
+#help(dnorm)
+curve(dnorm, from = -5, to = 5, col = "red", lwd = 3, 
+      main = "Density of the standard normal distribution") 
+```
+
+### Plots with ggplot2
+
+The aim of the `ggplot2` package is to create elegant data visualisations using a specific grammar for graphics. 
+
+--
+
+Here are the basic steps:
+
+- begin a plot with the function `ggplot()` creating a coordinate system that you can add layers to
+
+- usually the first argument of `ggplot()` is the dataset to use in the graph
+
+--
+
+For example the following creates an empty graph:
+
+```{r empty_ggplot, comment = '', eval=TRUE, tidy=FALSE}
+# 2.2
+
+library(ggplot2)
+head(mpg)
+ggplot(data = mpg)
+#ggplot(mpg)
+
+
+
+```
+
+You complete your graph by adding one or more **layers** to `ggplot()`. 
+
+--
+
+For example: 
+
+- `geom_point()` adds a layer of points to your plot, which creates a scatterplot
+
+- `geom_smooth()` adds a smooth line
+
+--
+
+Each geom function in `ggplot2` takes a mapping argument: 
+
+- how variables in your dataset are mapped to visual properties
+
+- always paired with `aes()` and the $x$ and $y$ arguments of `aes()` specify which variables to map to the $x$ and $y$ axes.
+
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.2.1
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+ggplot(Journals) +
+  geom_point(aes(x = log(subs), y = log(citations)))
+
+
+# lets add some color
+ggplot(data = mpg) +
+  geom_point(aes(x = displ, y = hwy, 
+                 color = class))
+
+ggplot(Journals) +
+  geom_point(aes(x = log(subs), y = log(citations),color=society))
+
+
+```
+
+Now lets pay attention to the details of the command...
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy, color = class))
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy, color = "blue"))
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy),color = "blue")
+
+#and play a bit more
+
+ggplot(mpg) + geom_point(aes(x = class, y = hwy))
+ggplot(mpg) + geom_point(aes(x = class, y = hwy,size=cty))
+
+
+
+```
+
+
+Now lets try to make a boxplot..
+
+If you are not familiar, a box plot or boxplot is a method for demonstrating graphically the locality, spread and skewness groups of numerical data through their quartiles [text from wiki] In addition to the box on a box plot, there can be lines (which are called whiskers) extending from the box indicating variability outside the upper and lower quartiles, thus, the plot is also called the box-and-whisker plot and the box-and-whisker diagram. Outliers that differ significantly from the rest of the dataset may be plotted as individual points beyond the whiskers on the box-plot. Box plots are non-parametric: they display variation in samples of a statistical population without making any assumptions of the underlying statistical distribution (though Tukey's boxplot assumes symmetry for the whiskers and normality for their length).
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+# 2.2.2  make a boxplot
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy))
+
+# and play with it
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,color=class))
+
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,color=class,fill=class))
+
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,fill=class))
+
+
+```
+
+The beauty of ggplot is that we can tune so many different parameters based on your needs and your artistic spirit =)
+But, you dont have to memorise all of these arguments. You can google online, or you can have some templates that serve your needs or your visualisation requirements.
+
+For example:
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,fill=class),
+               width=0.28,
+               outlier.colour = "red",
+               outlier.shape = 1,
+               outlier.fill = "red",
+               outlier.size = 0.2,notch = TRUE)
+
+
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,fill=class),
+               width=0.28,
+               outlier.colour = "red",
+               outlier.shape = 1,
+               outlier.fill = "red",
+               outlier.size = 0.2,notch = TRUE)+
+   theme_classic() 
+
+ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,fill=class),
+               width=0.28,
+               outlier.colour = "red",
+               outlier.shape = 1,
+               outlier.fill = "red",
+               outlier.size = 0.2,notch = TRUE)+
+  theme_classic() +
+  ylab('highway miles per gallon')+
+  theme(axis.text.y = element_text( size = 10 ),
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 10),
+      axis.title.x = element_blank(),
+      axis.title.y = element_text( size = 10, face='bold' ),
+      legend.position = "none",
+      aspect.ratio = 0.8)
+
+
+```
+
+Notice that ggplot offers many pre-defined themes that change a lot the appearance of the layout or the background of the plot. More customised themes are also available online and they can be downloaded and installed as standalone R packages, or they are parts of bigger analysis packages.
+
+But, can we save plots ?? The answer is **YES**
+
+The following example generates a pdf output, but we can save different formats too like png...
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#remember to check your own folder directory
+output_file <- file.path(path, "my_first_nice_boxplot.png")
+ggsave(output_file)
+
+```
+
+Now lets see another way to save a plot. The following example stores the ggplot into a variable which can be very useful too.
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+myFigure <- ggplot(mpg) +
+  geom_boxplot(aes(x = class, y = hwy,fill=class),
+               width=0.28,
+               outlier.colour = "red",
+               outlier.shape = 1,
+               outlier.fill = "red",
+               outlier.size = 0.2,notch = TRUE)+
+  theme_classic() +
+  ylab('highway miles per gallon')+
+  theme(axis.text.y = element_text( size = 10 ),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 14),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text( size = 10, face='bold' ),
+        legend.position = "none",
+        aspect.ratio = 0.8)
+
+class(myFigure)
+
+output_file <- file.path(path, "my_first_nice_boxplot2.pdf")
+pdf(output_file)
+plot(myFigure)
+dev.off()
+
+```
+
+
+Lets make a simple and a more fancy histogram
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+# 2.2.3 
+
+ggplot(mpg) +
+  geom_histogram(aes(x = hwy))+
+  theme_minimal() 
+  
+ggplot(mpg) +
+  geom_density(aes(x = hwy),color='red')+
+  theme_minimal() 
+
+ggplot(mpg,aes(x = hwy)) +
+  geom_histogram(aes(y = ..density..),
+                 colour = 1, fill = "white") + 
+  geom_density(lwd = 1, colour = 'red',
+               fill = 'lightblue', alpha = 0.25) +
+  theme_minimal()
+
+```
+
+
+Generate a scatter plot and add a regression line with confidence interval
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+# 2.2.4 
+ggplot(mpg,aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth()+
+  theme_minimal()
+
+#showing that simple coloring provides already good understanding of patterns in the data  
+ggplot(mpg,aes(x = displ, y = hwy)) +
+  geom_point(aes(color = drv)) +
+  geom_smooth()+
+  theme_minimal()+
+  theme(legend.position = "bottom")
+
+#introducing the facet_wrap function that is very helpful
+ggplot(mpg,aes(x = displ, y = hwy)) +
+  geom_point(aes(color = drv)) +
+  geom_smooth()+
+  facet_wrap(~drv,nrow=3)+
+  theme_bw()+
+  theme(legend.position = "none",aspect.ratio = 1)
+
+
+```
+
+The default model fitted by geom_smooth depends on the amount of data being plotted. 
+In this case it has told us that it is using a “loess” model to fit the line - this is a simple form of a moving average smoother
+
+## R exercise on ggplot (e2.2)
+
+1. Use the data set `car_price.csv` available in the documentation. Import the data in R.
+
+2. Explore the data.
+
+3. Make a scatterplot of price versus income, use basic plotting instructions and use `ggplot2`.
+
+4. Add a smooth line to each of the plots (using `lines` to add a line to an existing plot and `lowess` to do scatterplot smoothing and using `geom_smooth` in the `ggplot2` grammar).
+
+5. Color the previous ggplot based on sex
+
+6.   Transform sex to factor with levels (0,1)
+
+7. Show the plot per different sex in the dataset (use facet_wrap)
+
+
+# Data wrangling in R
+
+We will focus on the  `tidyverse`, including the `dplyr` packages which:
+
+- offer advanced, and fast, data handling with large R objects and lots of flexibility 
+
+- have a very specific syntax,
+
+In the next lines we will explore their potentials, but first we have to introduce the concept of "pipes"
+
+### Pipes in R
+
+In R, the pipe operator is `%>%`. 
+
+You can think of this operator as being similar to the `+` in a ggplot2 statement. 
+
+It takes the output of one statement and makes it the input of the next statement. 
+
+When describing it, you can think of it as a do this and “THEN” do that...
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+library(tidyverse)
+
+#2.5
+head(diamonds)
+table(diamonds$cut)
+
+diamonds$price %>% mean()
+#try other similar examples if you wish
+#diamonds$price %>% sqrt()
+
+
+```
+
+An easy way to understand how pipes work is to remember that:
+
+I woke up %>% 
+  showered %>% 
+  dressed %>% 
+  had coffee %>% 
+  came to an R course %>% 
+  had more coffee
+
+### Data manipulation operators
+
+The `dplyr` package holds many useful data manipulation verbs:
+
+- `mutate()` adds new variables that are functions of existing variables
+
+- `select()` picks variables based on their names
+
+- `filter()` picks cases based on their values
+
+- `summarise()` reduces multiple values down to a single summary
+
+- `arrange()` changes the ordering of the rows.
+
+These all combine naturally with `group_by()` which allows you to perform any operation “by group”.
+
+#### Filter
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.1
+filter(diamonds, cut == "Ideal") 
+ideal_diamonds <- diamonds %>% filter(cut == "Ideal")
+
+
+```
+
+#### Mutate
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.2
+mutate(diamonds, price_per_carat = price/carat)
+diamonds_updated <- mutate(diamonds, price_per_carat = price/carat)
+
+#combine with filtering
+expensive_diamonds <- diamonds %>% mutate(price_per_carat = price/carat) %>% 
+  filter(price_per_carat > 1500)
+
+```
+
+#### Summarise
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.3
+diamonds %>% summarise(mean = mean(price), 
+                       std_dev = sd(price))
+
+
+```
+
+#### Group_by
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.4
+diamonds %>% 
+  group_by(cut) %>% 
+  summarize(price = mean(price), carat = mean(carat))
+
+
+```
+
+**And you can mix-and-match what you have learned so far...**
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+diamonds %>% 
+  group_by(cut) %>% 
+  summarize(price = mean(price), carat = mean(carat)) %>%
+  ggplot(aes(x=price,y=carat,label=cut))+
+  geom_point(size=2)+
+  geom_text(position = position_jitter())+
+  theme_bw()
+
+```
+
+#### Select
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.5
+diamonds_filt <- select(diamonds, carat, cut, clarity,depth)
+colnames(diamonds_filt)
+
+```
+
+#### Count
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.6
+diamonds %>%
+  filter(cut=='Good') %>%
+  count(color,sort=TRUE)
+
+# as an alternative syntax without dplyr
+good_diamonds <- diamonds[diamonds$cut=='Good',]
+table(good_diamonds$color)
+
+```
+
+From the previous example it is obvious that many different and sometimes simpler ways exist to manipulate datasets and perform calculations over the observations they have. Remember that there is not right and wrong solutions, it is often a matter of preference, programming style that you like, speed and readability.
+
+#### Combining different operators to summarise info in the dataset
+
+```{r comment = '', tidy=TRUE, message=FALSE, out.width='80%', fig.align="center"}
+
+#2.5.7
+diamonds %>% 
+  mutate(price_per_carat = price/carat) %>%
+  group_by(cut,color) %>%
+  summarize(mean_carat = mean(carat),
+          sd_carat = sd(carat),
+          mean_price_per_carat = mean(price_per_carat),
+          sd_price_per_carat = sd(price_per_carat),
+          mean_depth = mean(depth),
+          sd_depth = sd(depth))
+
+
+#combine this with a scatter plot
+diamonds %>% 
+  mutate(price_per_carat = price/carat) %>%
+  group_by(cut,color) %>%
+  summarize(mean_carat = mean(carat),
+            se_carat = sd(carat)/length(carat),
+            mean_price_per_carat = mean(price_per_carat),
+            se_price_per_carat = sd(price_per_carat)/length(price_per_carat),
+            mean_depth = mean(depth),
+            se_depth = sd(depth)/length(depth)) %>%
+  ggplot(aes(x=mean_price_per_carat,y=mean_depth,color=cut)) +
+  geom_point(size=1)+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+#add the error bars to the scatter plot
+diamonds %>% 
+  mutate(price_per_carat = price/carat) %>%
+  group_by(cut,color) %>%
+  summarize(mean_carat = mean(carat),
+            se_carat = sd(carat)/length(carat),
+            mean_price_per_carat = mean(price_per_carat),
+            se_price_per_carat = sd(price_per_carat)/length(price_per_carat),
+            mean_depth = mean(depth),
+            se_depth = sd(depth)/length(depth)) %>%
+  ggplot(aes(x=mean_price_per_carat,y=mean_depth,color=cut)) +
+  geom_point(size=1.2)+
+  ylab('mean depth')+
+  xlab('mean price per carat ± std error')+
+  geom_errorbar(aes(xmin=mean_price_per_carat-se_price_per_carat, 
+                    xmax=mean_price_per_carat+se_price_per_carat), width=.15,
+                position=position_dodge(0.05))+
+  theme_bw()+
+  theme(legend.position = "bottom")
+
+```
+
+## R exercise on data wrangling (e2.5)
+
+1. Use the data set `gapminder_data.csv` available in the documentation. Import the data in R.
+
+2. Explore the data. Show the top rows of the data set. How many observations does the data set contain?
+
+3. Compute how many records are per continent (either with count or with table functions)
+
+4. Calculate the life expectancy in each continent
+
+5. Convert column country to factor data type
+
+6. Select the data from countries in Asia 
+
+7. What are the possible levels for `country` in the subset you created from countries in Asia ?  
+
+8. Remove all countries which do not appear in the factor variable (use function droplevels)
+
+9. Now, from all countries countries (gapminder the origianl data frame) select the observations from 2007 
+
+10. Bin the life expectancy in four bins of roughly equal size (hint: learn and use functions `quantile` and cut)
+
+11. Visualise how many observations are in each bin (hint use ggplot with geom_bar) and color it based on the continent ((hint: in the aes first color and then fill, what do you see?)
+
+
