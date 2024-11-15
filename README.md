@@ -8,9 +8,9 @@ Most of the course material have been adopted from similar courses available onl
 
 ### Schedule
 
-#### Pre-day
+### Pre-day
 
-##### 27th November 2024, Time 10:00-13:00
+#### 27th November 2024, Time 10:00-13:00
 
 We provide a special "pre-day" session for those facing issues or need help to install R and the required packages for the course.
 
@@ -18,9 +18,9 @@ Location: Neuro-SysMed seminar room, U etasje, Gamle Hovudbygg building
 
 A "first in first out" method will be followed =)
 
-#### Days 1 and 2
+### Days 1 and 2
 
-##### 4th and 5th December 2024,13:00-15:45, Basic and bit more advanced R
+#### 4th and 5th December 2024,13:00-15:45, Basic and bit more advanced R
 
 In the first two days we will go through fundamental concepts in R and you will be able to understand the principles of R as an environment for data manipulation, exploration and visualization. We have created little hands-on exercises that will help you to master the R syntax, understand different data types, explore the structure of the data as well as to realise the capabilities of some of the most important R packages. We will work with data importation and exportation and we will be able to create various visualisations using ggplot package. Then we will showcase the full potential of tidyverse package and we will learn different methods for manipulating and summarising data sets. The course is designed for new R users, and it is not expected from you to know all of the above-mentioned concepts. But you are adviced to follow the “RTutorial_beforecourse.pdf”, this will benefit you a lot during the course.
 
@@ -41,9 +41,9 @@ a. Visualisations using ggplot package
 Part4
 a. Data wrangling using tidyverse package
 
-#### Day 3
+### Day 3
 
-##### 6th December 2024 13:00-15:45, Analysis of RNA-seq data using R
+#### 6th December 2024 13:00-15:45, Analysis of RNA-seq data using R
 
 Part 1 - Fetching, understanding, and processing RNAseq data
 
@@ -90,7 +90,7 @@ https://rc2e.com/
 https://katrienantonio.github.io/intro-R-book/objects-data-types.html#basic-data-types
 
 
-## Contact
+### Contact
 
 Comments and bug reports are welcome, please email: Dimitrios Kleftogiannis (dimitrios.kleftogiannis@uib.no) OR Gonzalo Sanchez Nido (Gonzalo.Nido@uib.no)
 
