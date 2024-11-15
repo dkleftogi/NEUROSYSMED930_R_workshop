@@ -87,7 +87,7 @@ https://katrienantonio.github.io/intro-R-book/objects-data-types.html#basic-data
 
 ### Contact
 
-Comments and bug reports are welcome, please email: Dimitrios Kleftogiannis (dimitrios.kleftogiannis@uib.no) OR Gonzalo Sanchez Nido (Gonzalo.Nido@uib.no)
+Comments and bug reports are welcome, please email: Dimitrios Kleftogiannis (dimitrios.kleftogiannis@uib.no) OR Gonzalo Sanchez Nido (Gonzalo.Nido@uib.no) OR Eirik Tveit Solheim (eiriktsolheim@gmail.com)
 
 We are also interested to know about how you have used our material, including any improvements that you have implemented.
  
