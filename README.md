@@ -1,4 +1,6 @@
-## NEUROSYSM930: Practical programming session in R, 4-6 December 2024
+## NEUROSYSM930: Practical programming session in R 
+
+### 4-6 December 2024, Grupperom 9A109bP
 
 In this page we provide course material (e.g.,sample codes, datasets etc) and other useful information about the practical programming session in R.
 
