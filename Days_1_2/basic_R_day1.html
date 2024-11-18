@@ -366,7 +366,7 @@ and 2</h3>
 <p><strong>Dimi (teacher Day 1 and 2)</strong> <a href="https://www4.uib.no/en/find-employees/Dimitrios.Kleftogiannis" class="uri">https://www4.uib.no/en/find-employees/Dimitrios.Kleftogiannis</a></p>
 <p><strong>Gon (teacher Day 3)</strong> <a href="https://www4.uib.no/en/find-employees/Gonzalo.Sanchez.Nido" class="uri">https://www4.uib.no/en/find-employees/Gonzalo.Sanchez.Nido</a></p>
 <p><strong>Eirik (teaching assistant and admin)</strong> <a href="https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim" class="uri">https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim</a></p></li>
-<li><p>GitHub page with workshop material</p></li>
+<li><p>GitHub page with workshop material <a href="https://github.com/dkleftogi/NEUROSYSMED930_R_workshop" class="uri">https://github.com/dkleftogi/NEUROSYSMED930_R_workshop</a></p></li>
 <li><p>our UiB Mitt page <a href="https://mitt.uib.no/courses/47992" class="uri">https://mitt.uib.no/courses/47992</a></p></li>
 </ul>
 <hr />
@@ -532,7 +532,7 @@ my_numeric + 1</code></pre>
 <pre class="r"><code>ls()</code></pre>
 <pre><code>[1] &quot;my_character&quot;   &quot;my_date&quot;        &quot;my_logical&quot;     &quot;my_numeric&quot;    
 [5] &quot;my_numeric_str&quot; &quot;x&quot;              &quot;y&quot;             </code></pre>
-<pre class="r"><code>ls(pat=&#39;max.&#39;)</code></pre>
+<pre class="r"><code>ls(pat=&#39;max.&#39;) #list objects with a pattern in the file name</code></pre>
 <pre><code>character(0)</code></pre>
 <pre class="r"><code>ls(pat=&#39;my_&#39;)</code></pre>
 <pre><code>[1] &quot;my_character&quot;   &quot;my_date&quot;        &quot;my_logical&quot;     &quot;my_numeric&quot;    
@@ -646,9 +646,9 @@ typeof(my_matrix)</code></pre>
 <pre><code>[1] 3</code></pre>
 <p><strong>Note on Missing Values</strong></p>
 <p>In real data analysis, it is often the case that we are missing some
-data in a data set. For example, say we want to add tail length to our
-dataset, but one of our cats wouldn’t hold still long enough to be
-measured… we know it has a tail (so we can’t record it as
+data in a data set. For example, say we study cats and we want to add
+tail length to our dataset, but one of our cats wouldn’t hold still long
+enough to be measured… we know it has a tail (so we can’t record it as
 <code>0</code>), but we don’t know what it is. We also can’t record it
 using a word or code (character; such as <code>&quot;missing&quot;</code>) because
 vectors in R all have to be the same type, and weight is numeric. A
@@ -933,7 +933,7 @@ required to provide supplementary files in tabular format.</p>
 our working space in Rstudio to the correct location in the hard drive.
 You need to remember of course the structure of your file system…</p>
 <pre class="r"><code>getwd()</code></pre>
-<pre><code>[1] &quot;/Users/kleftogi/Library/CloudStorage/Dropbox/My Mac (c02z46udlvdc.klientdrift.uib.no)/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/Days_1_2&quot;</code></pre>
+<pre><code>[1] &quot;/Users/kleftogi/Library/CloudStorage/Dropbox/My Mac (c02z46udlvdc.klientdrift.uib.no)/Desktop/Journal_clubs_and_Students/NEUROSYSMED930_R_workshop/Days_1_2&quot;</code></pre>
 <pre class="r"><code>setwd(&#39;/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/&#39;)
 
 #use a full path

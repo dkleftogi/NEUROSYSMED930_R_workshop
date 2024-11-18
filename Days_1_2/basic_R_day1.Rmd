@@ -16,8 +16,7 @@ output: html_document
 
     **Eirik (teaching assistant and admin)** https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim
 
-- GitHub page with workshop material
-
+- GitHub page with workshop material https://github.com/dkleftogi/NEUROSYSMED930_R_workshop 
 
 
 - our UiB Mitt page https://mitt.uib.no/courses/47992 
@@ -179,7 +178,7 @@ class(my_numeric_str)
 ### List objects in the environment and delete objects
 ```{r list_and_delete, comment = '', eval=TRUE, tidy=FALSE}
 ls()
-ls(pat='max.')
+ls(pat='max.') #list objects with a pattern in the file name
 ls(pat='my_')
 ls(all.names = TRUE)
 
@@ -285,8 +284,7 @@ nrow(my_matrix)
 **Note on Missing Values**
 
 In real data analysis, it is often the case that we are missing some data in a
-data set. For example, say we want to add tail length to our dataset, but one of
-our cats wouldn't hold still long enough to be measured... we know it has a
+data set. For example, say we study cats and we want to add tail length to our dataset, but one of our cats wouldn't hold still long enough to be measured... we know it has a
 tail (so we can't record it as `0`), but we don't know what it is. We also
 can't record it using a word or code (character; such as `"missing"`) because
 vectors in R all have to be the same type, and weight is numeric. A common

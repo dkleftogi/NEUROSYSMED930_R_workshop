@@ -16,7 +16,7 @@ output: html_document
 
     **Eirik (teaching assistant and admin)** https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim
 
-- GitHub page with workshop material
+- GitHub page with workshop material https://github.com/dkleftogi/NEUROSYSMED930_R_workshop 
 
 
 
@@ -320,6 +320,23 @@ ggplot(mpg,aes(x = displ, y = hwy)) +
 
 The default model fitted by geom_smooth depends on the amount of data being plotted. 
 In this case it has told us that it is using a “loess” model to fit the line - this is a simple form of a moving average smoother
+
+**Note about colors in R**
+
+Thanks to R we have endless possibilities to generate nice figures and tailor them based on our needs. One of the topics we did not have time to cover extensively is use of colors in R. But you are highly advised to "play" and explore it in your free time...
+
+Specifically, there is a package called RColorBrewer which offers several palettes that can be used to elevate the appearance of your graphics.
+
+Take a look on the following:
+https://r-graph-gallery.com/38-rcolorbrewers-palettes.html
+
+The following page provides nice examples too:
+
+https://www.sthda.com/english/wiki/colors-in-r?title=colors-in-r
+
+Remember that it is a good practice to use consistent colors when we define different groups in our analysis. For example patients groups and healthy controls can have their own color througout our paper figures. Selecting specific palettes or colors from RColorBrewer and combining it with factor data type allows us to match everywhere group levels to colors. 
+
+Simply you can order the factor levels of your categorical data in the order you want, and define a vector of colors where the first color will matches the first factor level, the second color matches the second factor level and so on.... 
 
 ## R exercise on ggplot (e2.2)
 
