@@ -28,13 +28,13 @@ In the first two days we will go through fundamental concepts in R and you will 
 
 In summary the topics we will cover the first two days are as follows:
 
-Part1 - (a) Quick recap on basic programming concepts; (b) Data types ; (c) Data import/export
+Part 1 - (a) Quick recap on basic programming concepts; (b) Data types ; (c) Data import/export
 
-Part2 - (a) Basic exploratory data analysis; (b) A bit more general programming concepts (time permitting)
+Part 2 - (a) Basic exploratory data analysis; (b) A bit more general programming concepts (time permitting)
 
-Part3 - (a) Visualisations using ggplot package
+Part 3 - (a) Visualisations using ggplot package
 
-Part4 - (a) Data wrangling using tidyverse package
+Part 4 - (a) Data wrangling using tidyverse package
 
 ### Day 3
 
@@ -84,6 +84,8 @@ https://rc2e.com/
 
 https://katrienantonio.github.io/intro-R-book/objects-data-types.html#basic-data-types
 
+
+Blog Devoted to Ecology research, but offers nice examples and videos https://www.rforecology.com/post/
 
 ### Contact
 
