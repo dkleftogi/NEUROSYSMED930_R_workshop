@@ -1,0 +1,581 @@
+---
+title: "Part 2: RNA-seq analysis"
+author: "Gonzalo S. Nido"
+date: "`r Sys.Date()`"
+output:
+    html_notebook:
+        toc: true
+        toc_float: true
+        number_sections: true
+        highlight: tango
+---
+
+
+
+
+
+
+# Packages
+
+As usual, we will need to load some packages.
+
+
+<q>Load the `tidyverse` and `DESeq2` packages, install them if they are not
+already.</q>
+
+
+
+Now, load the DESeq2 object that you saved previously using the `readRDS`
+function.
+
+<q>Load the Rds object containing the DESeq2 object into the "dds" variable</q>
+
+
+While we already applied some filtering the to count matrix that we used as an
+input, we can still pre-filter the dataset further. You can, in fact, treat the
+DESeqDataSet object (in our `dds` variable) as a matrix to subset it.
+
+For example, `dim(dds)` will return the dimensions of the matrix (number of
+features or genes, and number of samples). Similarly, we can subset to the
+first 3 samples and first 10 genes with `dds[1:10,1:3]`.
+
+To access the full count matrix, you can use `counts(dds)`, and to access the
+sample metadata, you use `colData(dds)`.
+
+# Some more prefiltering
+
+## Pre-filtering genes
+
+It is customary to remove genes that have very low expression, since their
+signal-to-noise ratio is very small to yield any biologically significant
+results.
+
+<q>Keep in the `dds` object only genes with at least 10 reads in more than 25%
+of the samples</q>
+
+Useful functions:
+
+* `rowSums()`
+
+
+We went from about 20,200 genes down to about 17,400.
+
+
+## Sample characterization
+
+Now we want to explore the samples in our dataset. In order to compare the
+columns of our matrix, however, we need to normalize the counts. The simplest
+way would be to take the sum of each column (i.e., the total library size of
+each sample) and divide the counts by the value. The `DESeq2` package offers
+some more sophisticated methods, and we will use the "variance stabilising
+transformation" in this tutorial (the `vst()` function).  The output is a
+`DESeqTransform` object, and the values calculated can be extracted from it
+using the `assay()` function:
+
+    norm_expr <- vst(dds) %>% assay
+
+<q>Execute the command above to obtain a matrix of normalized gene
+expression</q>
+
+
+Before we plot the expression values we just calculated, let's install and load
+the `pheatmap` package, used to plot heatmaps.
+
+
+Now, instead of plotting the whole normalized expression matrix that we
+obtained using the `vst()` function, let us only plot the top 1,000 most
+varying genes using the `pheatmap()` function.
+
+<q>Calculate the standard deviation for each gene and pick the top 1,000 genes
+with the highest. Plot the vst expression matrix for those genes using the
+`pheatmap()` function.</q>
+
+Useful functions:
+
+* `apply()`
+* `sd()`
+* `rowSds()`
+* `arrange()`
+* `desc()`
+* `slice_max()`
+* `pheatmap()`
+
+
+The heatmap is not that informative to compare across samples, because it only
+shows that some genes have a higher level of expression than others. By
+default, `pheatmap()` does not scale the data, but we can do that using
+scale="row" or scale="column".
+
+<q>Plot the heatmap again but this time using scale="row"</q>
+
+
+What could the two clusters be representing? We can annotate the columns of the
+heatmap by using the option "annotation_col" of `pheatmap()`. We need to
+provide a `data.frame` with the variables to annotate. For example:
+
+    annotation_col=as.data.frame(colData(dds)[,c("condition","origin")])
+
+<q> Plot the same heatmap but adding annotations for the condition, the origin,
+the RIN values and the post-mortem time</q>
+
+
+The fact that the two cohorts are so different is a reason for concern. We know
+that  the cohorts have very different RIN values and post-mortem intervals, and
+gene expression may reflect those differences.
+
+
+### Pairwise correlation between samples
+
+We are going to calculate how different *each pair* of samples are, and then
+summarize each sample by its median difference to the rest of the samples.
+
+The `cor()` function calculates the correlation between each pair of columns of
+the input matrix, and we can take advantage of it.
+
+<q>Use the `cor()` function on the subset of 1,000 most varying genes from the
+vst transformed gene expression data to calculate all pairwise correlations and
+plot the resulting correlation matrix using `pheatmap()`.</q>
+
+Useful functions:
+
+* `cor()`
+* `pheatmap()`
+
+
+<q>Calculate the median correlation per sample.</q>
+
+Useful functions:
+
+* `rowMedians()`
+* `sort()`
+
+
+
+A straightforward way to display outliers in this case is to plot a boxplot with
+ggplot2, which by default plots outliers as points:
+
+    ggplot(tibble(medCors)) + geom_boxplot(aes(x=1, y=medCors))
+
+<q>Plot a ggplot2 boxplot using the command above.</q>
+
+
+We can see that four samples (SL283585, SL283597, SL283590, SL283575) are shown
+as outliers - they are quite different from all the rest.
+
+Now we will plot all the samples in the first 2 principal components of a PCA.
+The easiest is probably to use the `plotPCA()` function from the `DESeq2`
+package, which works on the result from `vst()`. Note that you have to run
+`vst()` again on the `dds` object, since `plotPCA()` works on its output.
+
+Useful functions:
+
+* `vst()`
+* `plotPCA()`
+
+<q>Use the `plotPCA()` function to visualize the samples in the first 2
+principal components of the expression data.</q>
+
+
+<q>Do the same, but for each cohort (origin) separately.</q>
+
+
+Can you spot the two clusters in the NBB cohort?
+
+The `plotPCA()` function from the `DESeq2` package does something sneaky behind
+the scenes. If you check the help for the function, you'll see that the
+argument "ntop" is set to 500 by default. To save time, the function carries
+out the PCA only on the top 500 most varying genes, similarly to what we were
+doing before (but using the top 1,000). What happens if we use, for example,
+only the top 100 instead?
+
+<q>Use `plotPCA()` with ntop=400, then ntop=200, and finally with ntop=10 for
+all samples.</q>
+
+
+The fewer genes we use to construct the PCA, the more obvious the clusters
+become. What is going on? What could it be that separates our samples in two
+groups? Let's have a look at this top 10 most varying genes.
+
+First, load the gene descriptions that we used in the first tutorial using
+
+    geneNames <- readRDS(url("https://git.app.uib.no/neuromics/cell-composition-rna-pd/-/raw/master/Data/EnsDb.Hsapiens.v75.Rds"))
+
+<q>Load the geneNames.Rds file into the R session and convert it to a
+tibble</q>
+
+
+Then, find the gene names of the top10 most varying genes in the `geneNames`
+object.
+
+<q>Find the top10 most varying genes in the `geneNames` object.</q>
+    
+
+In which chromosome are most of these genes located? Can it explain the groups
+you obseved in the PCA?
+
+<q>Plot the PCA again using the `plotPCA()` function using *ntop=10* and
+*intgroup="sex"*.</q>
+
+
+Although sex-associated gene expression is not exclusively restricted to sex
+chromosomes, it is of a much greater magnitude in the sex chromosomes.
+
+## Check sex assignment
+
+We can use the strong association between sex-chromosome genes and sex to assess
+potential mis-labeling of samples. A quick way is to use all genes located in
+the Y chromosome to run a PCA.
+
+<q>Plot all the samples in the two principal components of the PCA of the
+Y-located genes, colouring the points by the sex of the sample.</q> NOTE: use
+the `vst()` function on the whole dataset, subset after.
+
+
+As you can see, most of the variance is explained by the first principal
+component, as expected. It would in fact be enough to plot the values for the
+PC1.
+
+```
+pca1 <- vst(dds)[rownames(dds) %in% Ygenes,] %>% 
+    assay %>%
+    prcomp
+pca1$rotation %>%
+    as_tibble(rownames="sample_id") %>%
+    select(sample_id, PC1) %>%
+    left_join(as_tibble(colData(dds))) %>%
+    ggplot(aes(x=sex, y=PC1)) +
+    geom_boxplot(outlier.shape=NA) +
+    geom_jitter(aes(colour=sex), height=0, width=.2)
+```
+
+
+For simplicity, we are going to remove from the `dds` object all genes mapped
+to the sex chromosomes.
+
+<q>Remove all X and Y genes from the `dds` object.</q>
+
+
+<q>Recalculate the pairwise correlations between samples as before with the
+filtered dataset. Plot the values and plot the PCA with ntop=1000</q>
+
+
+
+In order to plot the sample ids, we need to use the "returnData=TRUE" option,
+in the `plotPCA()` function which, instead of plotting, will then returns the
+data in a format that can be easily used with ggplot2, adding a layer with
+the labels:
+
+    ggplot(data) +
+    geom_text(aes(label=name), nudge_y=1.5, size=3)
+
+We could also, of course, run the PCA ourselves using `prcomp()`.
+
+
+Evaluating the PCA plot and the heatmap of correlations, do you think it is
+justified to remove any of the samples?
+
+
+
+
+
+
+# Cell type estimation
+
+Before proceeding with the differential expression analysis, since we are
+dealing with human brain tissue, we need to investigate what the cell
+composition is in our samples. This is of fundamental importance in these type
+of datasets because **most of the variability in gene expression in explained
+by the cell types**.
+
+We will use a very simple approach to estimate cell types similar, in a way, to
+what we used to "estimate" sex: summarize gene expression of a set of selected
+markers as their first principal component (PC1). The marker genes will be
+known cell type-specific genes.
+
+Let's load a list of markers of cortical cell types from
+[Neuroespresso](https://www.eneuro.org/content/4/6/ENEURO.0212-17.2017):
+
+    cortical.markers <- read_tsv("./Data/cortical_markers.tsv")
+
+<q>Read the tab-separated file "cortical_markers.tsv" into a tibble </q>
+
+
+Now let us run a PCA (as we have done until now) but subsetting the genes to
+the neuronal markers. We will use the `prcomp()` function and extract the
+values of the PC1 for each sample.
+
+<q>Run a PCA using `prcomp()` only on neuronal markers. Explore the result and
+find where the "rotation" values are.</q>
+
+
+Now we can do that for every other cortical cell type.
+
+<q>Calculate the first principal component for the other cell types and add
+them all to the metadatata of the dds object (`colData(dds)`).</q>
+
+
+And finally, do the same with the RNA markers for the cortical synapsome, which
+are not quite the same as the set of neuronal markers. These are RNAs found in
+the synapses, obtained from [Hafner et al.
+2019](https://pubmed.ncbi.nlm.nih.gov/31097639/).
+
+    synaptosome.markers <- read_tsv("./Data/synaptosome_markers.tsv")
+    
+
+How can we assess which variables are responsible for most of the variation in
+gene expression? PCA is very helpful in this regards. By definition, the first
+principal component will maximize the variance that it explains by combining
+linearly the variables. In a way, it is "summarizing" gene expression by
+optimally projecting it into one dimension. Then, with the leftover variance
+not explained by PC1, it will do the same, but with the constaint that PC2
+needs to be perpendicular to PC1.
+
+The first principal components are often referred to as the main lines of
+variation, because they gather as much as possible, and often serve as a good
+"summary" of the multidimensional data.
+
+If we want to assess whether cell type composition (or other variables) explain
+most of the variation, a simple way could be to test for association between
+variables and PCs. This is a bit involved programmatically, so here is the
+code:
+
+```
+scale.vec <- function(x) scale(x)[,1]
+
+pca2 <- dds %>% 
+    vst %>%
+    assay %>%
+    prcomp
+
+Metadata.pca <- pca2$rotation %>%
+    as_tibble(rownames="sample_id") %>%
+    select(sample_id, PC1:PC5) %>%
+    mutate_if(is.numeric, scale.vec) %>%
+    left_join(as_tibble(colData(dds)))
+
+Metadata.pca <- Metadata.pca %>% select(-sample_id, -origin, -sample_id_paper) %>% mutate_if(is.character, as.factor) %>%
+    mutate_if(is.factor, as.integer)
+
+allCors <- lapply(paste0("PC", 1:5), function(pc) {
+    lapply(colnames(Metadata.pca)[6:ncol(Metadata.pca)], function(var){
+        #message(paste0(pc, " vs ", var))
+        lm(formula=as.formula(paste0(pc, "~", var)), data=Metadata.pca) %>%
+            broom::tidy() %>% filter(term!="(Intercept)") %>%
+            mutate(PC=pc, VAR=var)
+    }) %>% Reduce("bind_rows",.)
+}) %>% Reduce("bind_rows",.)
+
+Pvals <- allCors %>% select(p.value, PC, VAR) %>%
+    pivot_wider(names_from=VAR, values_from=p.value)
+p.mat <- as.matrix(Pvals[,-1])
+rownames(p.mat) <- Pvals$PC
+
+Estimates <- allCors %>% select(estimate, PC, VAR) %>%
+    pivot_wider(names_from=VAR, values_from=estimate)
+e.mat <- as.matrix(Estimates[,-1])
+rownames(e.mat) <- Estimates$PC
+
+corrplot::corrplot(e.mat, p.mat=p.mat)
+```
+
+
+Do you see anything interesting? May it be that the RNA quality (RIN) is
+associated with cell type composition? That can easily be tested with a quick
+linear regression: try predicting the RIN values with the estimated values for
+synaptosomal content, then try the same with the estimated neuronal content,
+and then with both at the same time in the model. The formulas are as follow:
+
+* rin ~ Synapses
+* rin ~ Neuron
+* rin ~ Synapses + Neuron
+
+Then compare the resulting models using the `summary()` function on the linear
+fits.
+
+<q>Run 3 linear regressions with rin as a response variable and 1. Synapses; 2.
+Neuron; and 3. Synapses + Neuron as predictors. Check the adjusted R-squared
+values to compare the models.</q>
+
+
+Synaptosome expression seem to explain RIN the best. But what if we consider
+"origin" as well? Which is the "best" model? Check the adjusted R squared for
+the models or run `anova()` on two models to test whether a more complex model
+is significantly better at capturing RIN variation.
+
+<q>Add "origin" as a covariate to the previous models and compare the adjusted
+R squared between the simpler and more comples versions of the model. Even
+better, use the `anova()` function to compare the models.</q>
+
+
+You can also check the diagnostic plots by simply using the function `plot()`
+on the linear fit. Do you see a sample that you may want to exclude before
+running your model again? Does it make a difference?
+
+
+
+
+
+# Differential gene expression
+
+## Running an differential expression analysis
+
+With the `DESeq2` package, we can use the function `DESeq()` on our `dds`
+object to run the whole differential expression pipeline, which will run three
+steps in order:
+
+1. `estimateSizeFactors(dds)`: estimation of sample-specific normalization parameters
+2. `estimateDispersions(dds)`: estimation of gene-specific dispersion parameters
+3. `nbinomWaldTest(dds)`: negative binomial generalized linear model to calculate the desired log2-fold changes and calculation of Wald statistics
+
+When you run `DESeq`, by default it will calculate the fit according to
+whatever model you had specified when you created the object. The model's
+formula can be printed on screen using `design(dds)`.
+
+Let's change the model's formula of the object like so:
+
+    design(dds) <- ~ sex + age_years + condition
+
+and then run `DESeq()` on the `dds` object.
+
+**Note 1:** if you have manually changed something in the `colData(dds)`, it may
+be that some columns are of type "character". They should be converted to
+factors.
+
+**Note 2:** to avoid some headaches later on, we want to be very explicit with
+our variable of interest (the disease status) by specifying which of the two
+levels ("case" or "control") is the REFERENCE value. This can be done by using
+the `relevel()` function like so:
+
+    colData(dds)$condition <- relevel(colData(dds)$condition, ref="Control")
+
+<q>Run a differential expression analysis on the `dds` object using the
+`DESeq()` function. The model's formula should be __~ sex + age + condition__.
+Overwrite with the returned object the `dds` object.</q>
+
+Useful functions:
+
+* `mutate_if()`
+* `is.character()`
+* `DESeq()`
+
+
+## Looking at the results
+
+The `results()` function extracts the log2 fold changes and p values from the
+`dds` object (as long as the `DESeq` function was run). By default, the
+function will extract the log2 fold change **for the last variable in the
+design formula** (in our case, the disease status). However, it is always good
+practice to explicitly specify the contrast when calling `results()` with the
+"contrast" or "name" argument. There are different ways of specifying contrasts
+but, for example, if we wanted to extract the differential expression results
+between males and females, we could use:
+
+    results(dds, name="sex_M_vs_F")
+
+or
+
+    results(dds, contrast=c("sex", "M", "F"))
+
+they are equivalent. A nice trick to see which contrasts can be extracted using
+"name=", you can use
+
+    resultsNames(dds)
+
+which prints all possible values for the contrast name. In our case, the
+possible values for the "name=" argument are: **"Intercept", "sex_M_vs_F",
+"age_years", and "condition_Case_vs_Control"**
+
+<q>Use the `results()` function on the `dds` object to extract the differential
+expression between cases and controls and find out whether any genes are
+significant after correction.</q>
+
+
+Are there any significant changes in gene expression associated with the
+disease? 
+
+We have seen that RIN is associated with the main lines of variation in gene
+expression. We should expect, then, that RIN is adding a lot of "uninteresting"
+variation to the dataset, i.e., a lot of noise. What happens if you add "rin"
+as a covariate?
+
+You'll need to update the formula and re-run the whole pipeline like so:
+
+```
+design(dds) <- ~ sex + age_years + rin + condition
+dds <- DESeq(dds)
+res <- results(dds, name="condition_Case_vs_Control") %>% as_tibble(rownames="gene_name")
+res %>% arrange(padj)
+```
+
+<q>Re-run the analyses with RIN as a covariate.</q>
+
+
+What do you think has changed? How does the extra covariate added influence the
+results? What do you think would have happened if you added to the model a
+covariate that was highly associated with the condition of interest (i.e.,
+"confounded")?
+
+
+Since the cohorts had different RINs and post-mortem intervals, try to run the
+cohorts separately and explore the results.
+
+<q>Run the differential expression analyses separately for each cohort.</q>
+
+
+How can two cohorts exhibit such differences in their results? What does this
+suggest about inter-study replicability?
+
+
+
+# Gene set enrichment analyse
+
+We are going to use the `fgsea` package to run a gene set enrichment analysis
+on your results.
+
+<q>Install the `fgsea` package using `Bioconductor::install(fgsea)` and load
+the package.</q>
+
+
+We can download "gmt" formatted files from
+[MSigDB](http://www.gsea-msigdb.org/gsea/msigdb/collections.jsp) website, which
+can be imported into R using the `gmtPathways()` function from the `fgsea`
+package. I have already downloaded the KEGG database, which can be loaded into
+a variable like so:
+
+    KEGG_pathways <- gmtPathways("c2.cp.kegg.v2022.1.Hs.symbols.gmt")
+
+<q>Load the KEGG pathway list using the previous command.</q>
+
+
+We are going to prepare an input for the `fgsea()` function. We need to rank
+the genes according to our value of interest (in our case, it will be the
+"stat" column of our differential expression results, although you could use
+-log10(p-value) or log2FoldChange).
+
+<q>Create a vector with the "stat" values from the results and name the values
+with the corresponding gene names.<q>
+
+
+<q>Run `gsea_res <- fgsea(KEGG_pathways, ranks)` and explore the results
+("ranks" is the vector of differential expression stats).</q>
+
+
+What is at the top? Can you run the GSEA with the results from the two
+alternate models (i.e., with and withouth accounting for the effect of RIN)?
+
+<q>Create a new vector with the stats of the appropriate results and run
+`fgsea` again.<q>
+
+
+What happens if you add Neuron or Synapses to the design model? How that does
+affect the GSEA results?
+
+<q>Run another differential expression analysis using Neuron and/or Synapses as
+covariates and explore the differences in the enriched pathways.<q>
+
+
+
+Can you think of a way to identify the pathways that are more susceptible to
+RIN and/or Neuron correction?
+
+

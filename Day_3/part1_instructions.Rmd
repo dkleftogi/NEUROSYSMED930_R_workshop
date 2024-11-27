@@ -1,0 +1,402 @@
+---
+title: "Part 1: Fetching and examining data"
+author: "Gonzalo S. Nido"
+date: "`r Sys.Date()`"
+output:
+    html_notebook:
+        toc: true
+        toc_float: true
+        number_sections: true
+        highlight: tango
+---
+
+
+
+# Packages
+
+First, let us check whether we have the `Bioconductor` package installed, and
+install it if we don't.
+
+Remember that to find help for a command, you can type a question mark followed
+by the command in your Console. For example, `?read.table`.
+
+<q>Install Bioconductor using `install.packages()`, and then tidyverse, ggpubr,
+and broom packages using `BiocManager::install()`.</q>
+
+Useful functions:
+
+* `require()`
+* `library()`
+* `install.packages()`
+
+
+
+
+# Fetch sample metadata
+
+The data we want to study is from a published paper. It is a RNA-seq dataset
+from human post-mortem brain comparing healthy controls with Parkinson's
+diseased patients.
+
+This is the link for the publication:
+[Nido et al. 2020](https://doi.org/10.1186/s40478-020-00932-7)
+
+
+## Finding and reading in the sample metadata
+
+We want to read in sample metadata, which contains values for variables related
+with our samples, such as age, sex, and disease status. If we have a look at
+the original publication, they claim that the data is available on-line, in a
+GitLab repository. Can you find out where it is? (Hint: check the *Availability
+of data and materials* section).
+
+Then, either download the sample metadata file and read it into a R, or read it
+in directly from the URL. We will be using the `tibble` instead of the
+`data.frame` data structure since it is the
+["tidyr"](https://www.tidyverse.org/) way.  The *tidyverse* functions to read
+in the files (`read_table()`, `read_tsv()`, or `read_csv`). Otherwise, if you
+prefer to use `read.table()`, convert the object to tibble using `as_tibble()`.
+
+You need to pay attention to the format of the file you are reading in:
+
+* Does it contain a header?
+* What is the field delimiter? A comma? A TAB?
+
+Check that the file was loaded properly by printing the top of the file with
+the `head()` function.
+
+<q>Find the sample metadata file in the GitLab repository and read it into a
+tibble named "Metadata". Ensure it is properly parsed by using `head(Metadata)`.</q>
+
+Useful functions:
+
+* `read_table()`
+* `read_csv()`
+* `read_tsv()`
+
+
+
+
+## Exploring the metadata
+
+We need to look at the data we just loaded into our session.
+
+<q>Explore the size of the `Metadata` table (number of rows and columns) and
+print a summary of its columns using `summary(Metadata)`.</q>
+
+Columns in a `tibble` can be of different types (same as `data.frame`). 
+
+<q>What classes (or *types*) are each of the columns in the `Metadata`
+tibble?</q>
+
+Useful functions:
+
+* `nrow()` / `ncol()`
+* `summary()`
+* `class()`
+
+
+
+<q>How many samples are there in the table?</q> I'd expect that the
+*sample_id* column has unique identifiers, but worth making sure!
+
+Useful functions:
+
+* `nrow()` / `ncol()`
+* `anyDuplicated()`
+* `unique()`
+* `length()`
+
+
+Samples can be either from a healthy individual or from a Parkinson's diseased
+patient.  <q>How many different conditions?</q>
+
+
+Samples were collected in different hospitals and where hence stored in
+different brain banks. You need to summarize the counts grouping by the
+"origin" variable. There are several ways, but probably the easiest is to use
+the `table()` function.
+
+<q>How many samples each "origin" (cohort) has?</q>
+
+Useful functions:
+
+* `table()`
+* `group_by()` / `tally()`
+* `group_by()` / `summarise()`
+
+
+
+Samples are also classified according to their sex (M=male, F=female). <q>Can
+you extract the number of males and females in each of the cohorts?</q>
+Here, the `group_by()` and `tally()` come handy, but `table()` can also be
+used, as before.
+
+<q>Do you notice anything interesting when you explore the resulting table?</q>
+
+
+## Association between variables
+
+Now we want to explore whether the variable of interest (i.e., the Case/Control
+disease status) is associated with age. In a good experimental setup this
+should be minimized.
+
+**Age** is a continuous variable, while **condition** is a discrete variable
+(called "factor" in R) with two levels. We could then simply run a t-test
+comparing the average ages between groups.
+
+**NOTE: we are going to exclude all samples with _origin_ equal to "PA", which
+are actually from a different study.**
+
+<q>Is the condition associated with age?</q>
+
+Useful functions:
+
+* `filter()`
+* `t.test()`
+
+
+We want to do a similar test, but for **rin**, **pm_time_min** and **sex**
+(note that not all of these are continuous variables! A t-test may not be the
+best).
+
+<q>Is the *condition* associated with rin, pm_time_min, or sex? (Remember to
+filter out samples whose origin is PA).</q>
+
+
+Finally, we can try plotting some of the data. To this end, we will use
+`ggplot`, which is a bit complicated at first, but when mastered give a lot of
+flexibility.
+
+As an example, this would plot **age_years** versus **pm_time_min**, two
+continuous variables as a scatter plot:
+
+```
+Metadata %>% filter(origin != "PA") %>%
+    ggplot(aes(x=age_years, y=pm_time_min, color=origin)) +
+    geom_point()
+```
+
+We have also stratified by **origin**, with the different colors. Using
+`geom_smooth()` as an extra layer to the previous plot, we can add some
+smoothed trendlines.
+
+<q>Use `stat_smooth()` to add trendlines to the previous plot. Remember that
+layers are "added" (using the + sign).</q>
+
+
+Interestingly, we can see from the plot that NBB and PW brain collections
+exhibit very different post-mortem times.
+
+<q>Test whether the means of pm_time_min are statistically different between
+NBB and PW, then use geom_boxplot() to show the difference in a plot.</q>
+
+
+
+Finally, we can use a function from the `GGally` package to conveniently plot
+all the variables pairwise. Remember to install the package if you don't have
+it installed.
+
+<q>Use the `GGally::ggpairs()` function to plot columns 2 to 7 of your
+metadata.</q>
+
+There is a potential significant association, can you spot it? Since these are
+two continuous variables, instead of a t-test, we could this time run a linear
+regression. Can RIN predict post-mortem time?
+
+<q>Fit a linear regression to predict pm_time_min from rin</q>
+
+
+However, it seems that what is explaining the varince of post-mortem time is
+actually the origin of the brains... <q>Add the origin variable to the linear
+regression</q>
+
+
+What does this mean? How could these variables be causally associated to each
+other?
+
+
+
+# Get the count matrix and prefilter
+
+
+## Fetch the count matrix
+
+After having had a look at the sample variables, we are ready to read in the
+count data from the RNA-seq experiment.
+
+This matrix is provided in the same repository, and needs to be read into R as
+well. <q>Find and load the count matrix into an R tibble called `countMatrix`.</q>
+
+Explore the matrix: <q>what are its dimensions? What type of data is stored in
+it? What do the columns and the rows correspond to?</q>
+
+
+Useful functions:
+
+* `read_table()`
+* `read_csv()`
+* `read_tsv()`
+* `class()`
+* `dim()`
+* `summary()`
+
+
+At this point, we could use a variety of packages to analyze our data (e.g.,
+`limma`, `edgeR`, `DSS`...). We will use the `DESeq2` package from now on.
+
+<q>Install `DESeq2` from Bioconductor if not already installed and load it.</q>
+
+
+
+## Filter samples
+
+Before we generate a `DESeqDataSet object`, which will contain both the sample
+metadata and the RNA-seq counts that we just imported into the R session, we
+are going to filter both the `Metadata` and the `countMatrix` objects. For
+simplicity, we will restrict our analyses to the cohort ("origin") with best
+RIN and shortest post-mortem intervals.
+
+<q>Find out which origin cohort has the average highest RIN values and the
+average lowest post-mortem intervals</q>
+
+Useful functions:
+
+* `group_by()`
+* `summarise()`
+* `mean()`
+
+
+<q>Filter the `Metadata` to only contain information for the NBB and PW
+cohorts</q>
+
+
+## Filter genes
+
+We are also going to obtain a table that contains information about the genes,
+since our `countMatrix` has only ENSEMBL identifiers, and we want to have GENE
+NAMES. Such a table can be dowloaded from the Ensembl website, but it is
+conveniently located in the same GitLab repository from the paper as an R
+object:
+https://git.app.uib.no/neuromics/cell-composition-rna-pd/-/raw/master/Data/EnsDb.Hsapiens.v75.Rds
+
+To load the table, use the `readRDS()` function:
+
+    geneNames <- readRDS(url("https://git.app.uib.no/neuromics/cell-composition-rna-pd/-/raw/master/Data/EnsDb.Hsapiens.v75.Rds"))
+
+Note that you have to use the `url()` function because `readRDS()` only reads
+local files (you could, of course, download the Rds to your computer and load
+it without using `url()`). <q>Load the Rds saved object with the gene-level
+information into an object called `geneNames`.</q>
+
+
+If you inspect the `geneNames` object (with `head()`), you'll see it contains
+more information that we need. We want to make a smaller version that contains
+only 2 columns: the Ensemble gene id (**gene_id**) and the gene name
+(**gene_name**).
+
+In addition, we want to filter the rows so that genes in the final table:
+
+1. Are located in the nuclear chromosomes (**seqnames** is the column with the chromosome names)
+2. Are protein coding (**gene_biotype** column equals "protein_coding")
+3. There are no duplicated **gene_id**'s
+
+<q>Filter the `geneNames` table as specified above. Overwrite the `geneNames`
+object with the filtered result.</q> Note: careful with the chromosome names:
+they are encoded as characters, not numbers! Your final object should have
+23,304 rows and 2 columns.
+
+Useful functions:
+
+* `as.character()`
+* `filter()`
+* `select()`
+* `distinct()`
+
+
+We can use the `geneNames` tibble to subset your `countMatrix` to restrict the
+counts to these genes (rows). We can also subset `countMatrix` to the selected
+samples present in the `Metadata` object (columns).
+
+<q>Modify the `countMatrix` object so that it only contains the genes in
+`geneNames`, overwrite the `countMatrix` object with the result.</q>
+
+
+<q>Modify the `countMatrix` object so that it only contains the samples in
+`Metadata`.</q> The resulting `countMatrix` object should now have 20,256 rows
+and 50 columns.
+
+
+Finally, we want to substitute the Ensembl gene ids by gene names. 
+
+<q>Replace in the **genes** column of `countMatrix` the Ensembl ids by gene
+names using the `geneNames` table.</q>
+
+Useful functions:
+
+* `match()`
+* `left_join()`
+
+You may not have noticed, but now there are duplicated gene ids, because more
+than one Ensembl ids are mapped to the same gene name. This is such a typical
+problem in Bioinformatics!
+
+<q>Do something about the duplicated gene names: either delete all the
+duplicates and keep only one or, even better, sum up the counts.</q>
+
+<q>Keep only gene names and discard the Ensembl ids.</q>
+
+Useful functions:
+
+* `duplicated()`
+* `filter()`
+* `which()`
+* `group_by()`
+* `summarise()` / `summarise_at()` / `summarise_if()`
+
+
+Finally, we want to ensure that the columns of `countMatrix` correspond to the
+rows of the sample information in `Metadata`. If it is not the case, we want to
+reorder them. But first, we are gong to convert our `countMatrix` to an actual
+numeric `matrix` R object, and use the **gene_id** column as rownames for that
+matrix. This can be done in a couple of simple commands:
+
+    cMat <- countMatrix %>% select(-gene_name) %>% as.matrix
+    rownames(cMat) <- countMatrix$gene_name
+
+<q>Create a numeric `matrix` with the counts in `countMatrix` that has sample
+ids as colnames and gene names as rownames, with the above commands.</q>
+Remember to name your new object `cMat`.
+
+
+<q>Ensure that the columns (samples) of the new created matrix are in the same
+order as the sample_id column in `Metadata`, reorder them otherwise.</q>
+
+Useful functions:
+
+* `all()`
+
+
+
+
+
+## Create the DESeqDataSet object
+
+From now on, we'll work with a DESeqDataSet, which contains all the information
+about the samples and the counts.
+
+To create the object, simply use
+
+    dds <- DESeqDataSetFromMatrix(countData=round(cMat), colData=Metadata, design=~condition)
+
+<q>Create the object using the command above.</q>
+
+
+This will be the object to use in the following analyses, so we can save it as
+Rds so that it can be loaded after.
+
+    saveRDS(dds, "./dds.Rds")
+
+<q>Save the object as an Rds file using the command above.</q>
+
+
