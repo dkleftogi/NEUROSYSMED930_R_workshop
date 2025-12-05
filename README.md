@@ -1,6 +1,6 @@
 ## NEUROSYSM930: Practical programming session in R 
 
-### 4-6 December 2024, Grupperom 9A109bP
+### 8-10 December 2025, Grupperom 9A109bP
 
 In this page we provide course material (e.g.,sample codes, datasets etc) and other useful information about the practical programming session in R.
 
@@ -12,7 +12,7 @@ Most of the course material have been adopted from similar courses available onl
 
 ### Pre-day
 
-#### 27th November 2024, Time 10:00-13:00
+#### 3th December 2025, Time 10:00-13:00
 
 We provide a special "pre-day" session for those facing issues or need help to install R and the required packages for the course.
 
@@ -22,7 +22,7 @@ A "first in first out" method will be followed =)
 
 ### Days 1 and 2
 
-#### 4th and 5th December 2024,13:00-15:45, Basic and bit more advanced R
+#### 8th and 9th December 2025,13:00-15:45, Basic and bit more advanced R
 
 In the first two days we will go through fundamental concepts in R and you will be able to understand the principles of R as an environment for data manipulation, exploration and visualization. We have created little hands-on exercises that will help you to master the R syntax, understand different data types, explore the structure of the data as well as to realise the capabilities of some of the most important R packages. We will work with data importation and exportation and we will be able to create various visualisations using ggplot package. Then we will showcase the full potential of tidyverse package and we will learn different methods for manipulating and summarising data sets. The course is designed for new R users, and it is not expected from you to know all of the above-mentioned concepts. But you are adviced to follow the “RTutorial_beforecourse.pdf”, this will benefit you a lot during the course.
 
@@ -38,7 +38,7 @@ Part 4 - (a) Data wrangling using tidyverse package
 
 ### Day 3
 
-#### 6th December 2024 13:00-15:45, Analysis of RNA-seq data using R
+#### 10th December 2025 13:00-15:45, Analysis of RNA-seq data using R
 
 Part 1 - Fetching, understanding, and processing RNAseq data
 
@@ -89,7 +89,7 @@ Blog Devoted to Ecology research, but offers nice examples and videos https://ww
 
 ### Contact
 
-Comments and bug reports are welcome, please email: Dimitrios Kleftogiannis (dimitrios.kleftogiannis@uib.no) OR Gonzalo Sanchez Nido (Gonzalo.Nido@uib.no) OR Eirik Tveit Solheim (eiriktsolheim@gmail.com)
+Comments and bug reports are welcome, please email: Dimitrios Kleftogiannis (dimitrios.kleftogiannis@uib.no) OR Gonzalo Sanchez Nido (Gonzalo.Nido@uib.no) OR Synne Geithus (synne.geithus@uib.no)
 
 We are also interested to know about how you have used our material, including any improvements that you have implemented.
  
