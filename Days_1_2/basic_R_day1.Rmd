@@ -2,11 +2,11 @@
 title: "NEUROSYSM930"
 subtitle: "Practical programming session in R - Day 1 parts 1 and 2"
 author: "Dimitrios Kleftogiannis"
-date: "4 December 2024"
+date: "8 December 2025"
 output: html_document
 ---
 
-# General info about the course
+# General info about the course (5 min)
 
 - Who we are ?
 
@@ -14,7 +14,7 @@ output: html_document
 
     **Gon (teacher Day 3)** https://www4.uib.no/en/find-employees/Gonzalo.Sanchez.Nido
 
-    **Eirik (teaching assistant and admin)** https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim
+    **Synne (teaching assistant and admin)** 
 
 - GitHub page with workshop material https://github.com/dkleftogi/NEUROSYSMED930_R_workshop 
 
@@ -44,7 +44,7 @@ help(diamonds)
 View(diamonds)
 ```
 
-### Quick warm up with arithmetics
+### Quick warm up with arithmetics (10 min)
 
 Lets' do little arithmetics with R:
 
@@ -72,7 +72,7 @@ Lets' do little arithmetics with R:
 You have already appreciated that the order of operators matter, and that it is a good programming practise to use parentheses and make easy to read commands.
 
 
-### Mathematical functions
+### Mathematical functions (5 min)
 
 R has many built in mathematical functions. To call a function,we simply type its name, followed by open and closing parentheses.Anything we type inside the parentheses is called the function's arguments.
 
@@ -88,7 +88,7 @@ log10(10) # base-10 logarithm
 Don't worry about trying to remember every function in R. You can simply Google them.
 As already mentioned we can always ask R for help. Typing a `?` before the name of a command will open the same help page for that command. 
 
-### Comparing things
+### Comparing things (5 min)
 
 We can also do comparisons in R. It is relatively easy to remember the operators, but the **==** and **=** need a bit of attention. 
 
@@ -102,7 +102,7 @@ We can also do comparisons in R. It is relatively easy to remember the operators
 1 >= -9   #greater than or equal to
 ```
 
-### Variables
+### Variables (15 min)
 
 A fundamental concept in programming is a **variable**. 
 
@@ -124,7 +124,7 @@ x <- sum
 x(10,100)
 ```
 
-## R exercise on variables (e1.5)
+## R exercise on variables (e1.5 - 15 min)
 
 Which of the following are valid R variable names?
 
@@ -137,8 +137,9 @@ Which of the following are valid R variable names?
 - 2widths
 - celsius2kelvin
 
+# BREAK - 10 min
 
-# Data types
+# Data types (10 min)
 
 R offers numerous **data types**: e.g.
 
@@ -175,7 +176,7 @@ class(my_date)
 class(my_numeric_str)
 ```
 
-### List objects in the environment and delete objects
+### List objects in the environment and delete objects (5 min)
 ```{r list_and_delete, comment = '', eval=TRUE, tidy=FALSE}
 ls()
 ls(pat='max.') #list objects with a pattern in the file name
@@ -190,7 +191,7 @@ rm(list = ls())
 
 ```
 
-### Vectors
+### Vectors (15 min)
 
 A **vector** is a simple structure to store data:
 
@@ -251,7 +252,7 @@ Some surprising things can happen when R forces one basic data type into another
 
 Be careful and always inspect your data from one part of the analysis to another
 
-### Matrices
+### Matrices (5 min or skip - optional)
 
 A **matrix** is:
 
@@ -266,18 +267,19 @@ Here are some examples:
 
 my_matrix <- matrix(1:12, nrow=3,ncol=4, byrow = TRUE)
 my_matrix
-my_matrix[2, 4]
+my_matrix[2,4]
+my_matrix[3,2]
 
 class(my_matrix)
 typeof(my_matrix)
 my_matrix[2, 4] <- 4.33
+my_matrix[1, 4] <- 5
 typeof(my_matrix)
 str(my_matrix)
 
 dim(my_matrix)
 ncol(my_matrix)
 nrow(my_matrix)
-
 
 ```
 
@@ -298,6 +300,13 @@ the vector in which it is found.
 ```{r comment = ''}
 my_matrix[2,3] <- NA
 my_matrix
+
+my_matrix > 4 
+idx <- my_matrix > 4
+my_matrix[idx] <- NA
+is.na(my_matrix)
+max(my_matrix)
+max(my_matrix,na.rm=TRUE)
 
 ```
 
@@ -338,9 +347,15 @@ rownames(mtcars)
 #View(mtcars)
 
 #the operator $
-mtcars$cyl
-mtcars[,2]
+mtcars$mpg
+mtcars[,3]
 mtcars[,'cyl']
+mtcars[,"hp"]
+
+mtcars[,c('hp')]
+
+subset_vector <- mtcars$mpg
+subset_mtcars <- mtcars[c(2,5,10),c('hp','wt')]
 
 typeof(mtcars$cyl)
 summary(mtcars$cyl)   # use $ to extract another variable from a data frame
@@ -358,7 +373,7 @@ colnames(diamonds)
 
 ```
 
-### Lists
+### Lists (5 min)
 
 A **list** allows you to 
 
@@ -380,7 +395,7 @@ A **list** allows you to
 my_list <- list(A = 1, 
                 B = c(1:20), 
                 C = seq(1, 4, length=5),
-                D = c("Dimi", "Gon",'Eirik','Nina'))
+                D = c("Dimi", "Gon",'Synne','Haris'))
 
 names(my_list)
 str(my_list)
@@ -399,8 +414,8 @@ my_list$E <- mtcars
 str(my_list)
 
 ```
-
-### Factors
+ 
+### Factors (5 min)
 
 Another important data structure is called a *factor*. Factors usually look like
 character data, but are typically used to represent categorical information that
@@ -419,7 +434,7 @@ str(factor_ordering_example)
 
 For now we will not provide more information, but in the following parts and exercises we will showcase more examples. 
 
-## R exercise on data types (e1.6)
+## R exercise on data types (e1.6 - 15 min)
 
 1. Create a vector `fav_music` with the names of your favourite artists/bands.
 
@@ -436,7 +451,7 @@ For now we will not provide more information, but in the following parts and exe
 7. Check the structure of the data frame, ask for a `summary`.
 
 
-# Data importation and exportation
+# Data importation and exportation (15 min)
 
 Very often in real life analyses we have to read data from an external file for example a txt file from the lab or an excel file with clinical information of patients. 
 
@@ -528,10 +543,11 @@ names(pop_list)
 There are many more packages that allow us to import different data types for example we can import SPSS or Strata files, or even platform-specific data types.For example there are packages to load images, cytometry files called .fcs files, gene expression data or variant calling data.
 
 
-### Export an excel file
+### Export an excel file 
 
 ```{r export_excel, comment = '', eval=TRUE, tidy=FALSE}
 #1.10
+#install.packages("xlsx")
 library(xlsx)
 #change the path to yours
 write.xlsx(pop_1, '/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programming_prep/My_R_repo/data/my_first_export.xlsx', sheetName = "page1", 
@@ -539,12 +555,12 @@ write.xlsx(pop_1, '/Users/kleftogi/Desktop/Journal_clubs_and_Students/R_programm
 
 ```
 
-# Our first exploratory data analysis
+# Our first exploratory data analysis (10 min)
 
 Now based on what we learned so far we will perform together a data exploration task. We will see different data types and basic functions and we will elaborate a bit more on how we can program other similar analyses in the future. 
 
 ```{r basic_exploration, comment = '', eval=TRUE, tidy=FALSE}
-# 1.11 
+# 1.11 Determinants of Wages Data (CPS 1985)
 path.data <- file.path(path, "CPS1985.txt")
 CPS1985 <- read.table(path.data, header = TRUE)
 
@@ -573,6 +589,8 @@ table(CPS1985$occupation)
 CPS1985$occupation <- factor(CPS1985$occupation,
                              levels = c("management","office","sales","services","technical","worker" ))
 
+#can we add one more level ?
+
 levels(CPS1985$occupation)
 levels(CPS1985$occupation)[c(1,5)] <- c("mgmt","techn")
 summary(CPS1985$occupation)
@@ -596,6 +614,7 @@ attach(CPS1985)                 # attach the data set to avoid use of $
 table(gender, occupation)       # no name_df$name_var necessary
 prop.table(table(gender, occupation))
 prop.table(table(gender, occupation), 2) #what is the difference ?
+prop.table(table(gender, occupation), 1) #can you explain ?
 plot(gender ~ occupation, data = CPS1985)
 detach(CPS1985)                 # now detach when work is done
 
@@ -608,13 +627,12 @@ tapply(wage, gender, mean)
 tapply(wage, gender, median)
 boxplot(log(wage) ~ gender, data = CPS1985)
 
-
 tapply((wage), list(gender, occupation), mean)
 tapply((wage), list(gender, occupation), median)
 
 ```
 
-# A bit more general programming concepts
+# A bit more general programming concepts (optional if time permits)
 
 Here we will learn about relational operators.
 
@@ -632,29 +650,32 @@ Logical operators can be combined,for example
 
 ```{r eval=FALSE}
 TRUE & TRUE #logical AND
-FALSE | TRUE #logicak OR
+FALSE | TRUE #logical OR
 5 <= 5 & 2 < 3
 3 < 4 | 7 < 6
 ```
 
-### Conditionals statements or expressions
+### Conditionals statements or expressions (optional if time permits)
 
 In programming, conditionals (equally called conditional statements, conditional expressions and conditional constructs) are programming language constructs that perform different computations or actions or return different values depending on the value of a Boolean expression, called a condition.
 
 Let us focus on the well-known `if` statement in R.
 
 ```{r comment = ''}
-num_attendees <- 30
+num_attendees <- 1
 if (num_attendees > 5) {
   print("You're popular!")
+  
 }
+
+
 ```
 
 and if the condition is not full-filled we have the `if else` statement
 
 ```{r comment = ''}
 num_attendees <- 5
-if (num_attendees > 5) {
+if (num_attendees > 5){
   print("You're popular!")
 }else{
   print("You are not so popular!")
@@ -662,7 +683,7 @@ if (num_attendees > 5) {
 ```
 
 
-### Loops 
+### Loops (optional if time permits)
 
 Loops or Iteration Statements in Programming are helpful when we need a specific task in repetition. They're essential as they reduce hours of work to seconds. The most famous loops are the `while` and the `for` loops that have different properties and uses.
 
@@ -670,15 +691,28 @@ Because of limited time we will showcase only the `for` loop in R.
 
 ```{r comment = '', eval=FALSE}
 ourNames <- c('Dimi', 'Gon', 'Eirik','Anna','Nina','Kjell-Morten','Charis')
+ourNames[1]
+ourNames[2]
 
 # loop version 1
-for (p in ourNames) {
-  print(p)
+for (myBar in ourNames) {
+  print(myBar)
+  
+ if (myBar == 'Gon'){
+  print("You're popular!")
 }
+
+}
+
 # loop version 2
 for (i in 1:length(ourNames)) {
   print(ourNames[i])
 }
+
+for (i in 1:length(ourNames)) {
+  print(paste0('Position:',i,' ',ourNames[i]))
+}
+
 
 #how to iterate over a matrix ?
 my_matrix <- matrix(1:12, nrow=3,ncol=4, byrow = TRUE)
@@ -692,7 +726,7 @@ for (i in 1:nrow(my_matrix)) {
 
 ---
 
-### Write your own function
+### Write your own function (optional if time permits)
 
 Creating a function in R is basically the assignment of a function object to a variable. 
 
