@@ -1,9 +1,11 @@
 ---
 title: "NEUROSYSM930"
-subtitle: "Practical programming session in R - Day 2 parts 3 and 4"
 author: "Dimitrios Kleftogiannis"
-date: "5 December 2024"
-output: html_document
+date: "9 December 2025"
+output:
+  html_document: default
+  pdf_document: default
+subtitle: "Practical programming session in R - Day 2 parts 3 and 4"
 ---
 
 # General info about the course
@@ -14,7 +16,7 @@ output: html_document
 
     **Gon (teacher Day 3)** https://www4.uib.no/en/find-employees/Gonzalo.Sanchez.Nido
 
-    **Eirik (teaching assistant and admin)** https://www4.uib.no/finn-ansatte/Eirik.Tveit.Solheim
+    **Synne (teaching assistant and admin)** 
 
 - GitHub page with workshop material https://github.com/dkleftogi/NEUROSYSMED930_R_workshop 
 
@@ -27,7 +29,7 @@ output: html_document
 # Visualisations
 
 
-### Basic plots
+### Basic plots (10 min)
 
 Our starting point is the construction of a **scatterplot**:
 
@@ -70,7 +72,7 @@ curve(dnorm, from = -5, to = 5, col = "red", lwd = 3,
       main = "Density of the standard normal distribution") 
 ```
 
-### Plots with ggplot2
+### Plots with ggplot2 (40 min)
 
 The aim of the `ggplot2` package is to create elegant data visualisations using a specific grammar for graphics. 
 
@@ -338,7 +340,7 @@ Remember that it is a good practice to use consistent colors when we define diff
 
 Simply you can order the factor levels of your categorical data in the order you want, and define a vector of colors where the first color will matches the first factor level, the second color matches the second factor level and so on.... 
 
-## R exercise on ggplot (e2.2)
+## R exercise on ggplot (e2.2 - optional in class - 30 min)
 
 1. Use the data set `car_price.csv` available in the documentation. Import the data in R.
 
@@ -355,7 +357,7 @@ Simply you can order the factor levels of your categorical data in the order you
 7. Show the plot per different sex in the dataset (use facet_wrap)
 
 
-# Data wrangling in R
+# Data wrangling in R (40 min)
 
 We will focus on the  `tidyverse`, including the `dplyr` packages which:
 
@@ -556,7 +558,7 @@ diamonds %>%
 
 ```
 
-## R exercise on data wrangling (e2.5)
+## R exercise on data wrangling (e2.5 - optional in class - 30 min)
 
 1. Use the data set `gapminder_data.csv` available in the documentation. Import the data in R.
 
